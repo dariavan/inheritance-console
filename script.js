@@ -1,6 +1,7 @@
-
 const readline = require('readline');
 var choice;
+// поиск в промежутке
+// изменить боинг и второй, добавить уникалььное поле
 
 function Plane(name, distanse) {   
     this.name=name || "Самолетик"; 
@@ -98,7 +99,7 @@ passangerPlanes = [airBus1, airBus2, boeing1, boeing2];
 cargoPlanes = [ty1, ty2];
 airport = [...passangerPlanes, ...cargoPlanes];
 
-  console.log("\nИнтересные фактики: ")
+  console.log("\nИнтересные факты: ")
   sumPeopleCapacity(passangerPlanes);
   sumWeightCapacity(cargoPlanes);
 
@@ -134,6 +135,8 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
+// поиск в промежутке
+
 var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n", 
 "Сделай правильный выбор! ", "Введи количество: "];
 rl.question(questions[0], (answer) => {
@@ -150,6 +153,7 @@ rl.question(questions[0], (answer) => {
     }
     
     rl.question(questions[1], (answer) =>{
+     
       console.log("Используем самолет номер " + answer.toString().trim() + "\n");
       let thePlaneNumber = answer;
 
@@ -167,8 +171,7 @@ rl.question(questions[0], (answer) => {
 
 
   function booking(plane, numberOfSpaces, answer){
-    
-    if (answer >= numberOfSpaces || answer < 0 || isNaN(answer) == true){
+    if (answer >= numberOfSpaces || answer < 0 || isNaN(answer)){
       console.log("\nОшибочка! Неправильное количество мест. Отказано.\n");
       return numberOfSpaces;
     } else {
