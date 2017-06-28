@@ -1,7 +1,6 @@
 
 const readline = require('readline');
 var choice;
-var questions = "\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n";
 
 function Plane(name, distanse) {   
     this.name=name || "Самолетик"; 
@@ -40,8 +39,9 @@ CargoPlane.prototype.description = function(){
   console.log("^CargoPlane.description");
 }
 
-function AirbusPassangerPlane(name, distanse, peopleCapacity, comment){    
+function AirbusPassangerPlane(name, distanse, peopleCapacity, freeSeats, comment){    
   PassangerPlane.apply(this, arguments); 
+  this.freeSeats = freeSeats;
   this.comment = comment;
 }
  
@@ -49,24 +49,29 @@ AirbusPassangerPlane.prototype = new PassangerPlane();
 AirbusPassangerPlane.prototype.description = function(){
   PassangerPlane.prototype.description.apply(this, arguments);
   console.log(`  Вместимость: ${this.peopleCapacity}
+    Свободные места: ${this.freeSeats}
       Комментарий: ${this.comment}`);
   console.log("^AirbusPassangerPlane.description");
 }
 
-function BoeingPassangerPlane(name, distanse, peopleCapacity, comment){    
+function BoeingPassangerPlane(name, distanse, peopleCapacity, freeSeats, comment){    
   PassangerPlane.apply(this, arguments); 
+  this.freeSeats = freeSeats;
   this.comment = comment;
 }
 
 BoeingPassangerPlane.prototype = new PassangerPlane();
 BoeingPassangerPlane.prototype.description = function(){
    PassangerPlane.prototype.description.apply(this, arguments);
-    console.log(`  Комментарий: ${this.comment}`);
+    console.log(`  Вместимость: ${this.peopleCapacity}
+    Свободные места: ${this.freeSeats}
+      Комментарий: ${this.comment}`);
     console.log("^BoeingPassangerPlane.description");
 }
 
-function TyCargoPlane(name, distanse, weightCapacity, comment){    
+function TyCargoPlane(name, distanse, weightCapacity, freeSeats, comment){    
   CargoPlane.apply(this, arguments); 
+  this.freeSeats = freeSeats;
   this.comment = comment;
 }
 
@@ -78,15 +83,13 @@ TyCargoPlane.prototype.description = function(){
 }
 
 //passangers planes objs
-airBus1 = new AirbusPassangerPlane("AirBus A320", 10000, 140, 'классненький');
-airBus2 = new AirbusPassangerPlane("AirBus A318", 15000, 105, 'ну такой');
-boeing1 = new BoeingPassangerPlane("Boeing 777", 10640, 400, "хороший");
-boeing2 = new BoeingPassangerPlane("Boeing 707", 8640, 200, "норм");
+airBus1 = new AirbusPassangerPlane("AirBus A320", 10000, 140, 50, 'классненький');
+airBus2 = new AirbusPassangerPlane("AirBus A318", 15000, 105, 60, 'ну такой');
+boeing1 = new BoeingPassangerPlane("Boeing 777", 10640, 400, 10, "хороший");
+boeing2 = new BoeingPassangerPlane("Boeing 707", 8640, 200, 16, "норм");
 //cargo planes objects
-ty1 = new TyCargoPlane("Ту-136", 15000, 20000, "не оч");
-ty2 = new TyCargoPlane("Ту-330", 17000, 24000, "оч");
-
-ty1.description();
+ty1 = new TyCargoPlane("Ту-136", 15000, 20000, 2, "не оч");
+ty2 = new TyCargoPlane("Ту-330", 17000, 24000, 3, "оч");
 
 //arrays of planes
 passangerPlanes = [airBus1, airBus2, boeing1, boeing2];
@@ -129,14 +132,28 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-rl.question(questions, (answer) => {
+var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n", 
+"Выбор за тобой: "];
+rl.question(questions[0], (answer) => {
     firstChoice(answer.toString().trim());
     console.log('Выбор: ' + choice[0].type);
-    let thePlane = choice[getRandomInt(0, choice.length-1)];
-    console.log('\n Идем на взлет -вж-вж-вж:\n');
-    thePlane.description();
-    rl.close();
-});
+    console.log(' Доступные варианты: ');
+    for (let i=0; i < choice.length; i++){
+      console.log(`  ${i+1}) Название: ${choice[i].name}
+      Свободные места: ${choice[i].freeSeats}`);
+    }
+    rl.question(questions[1], (answer) =>{
+      console.log("Вы ввели: " + answer.toString().trim());
+      choice[answer-1].description();
+      rl.close();
+    });
+     });
+
+    // let thePlane = choice[getRandomInt(0, choice.length-1)];
+    // console.log('\n Идем на взлет -вж-вж-вж:\n');
+    //thePlane.description();
+    
+
 
 function firstChoice(answer) {
   switch(answer.toString().trim()){
