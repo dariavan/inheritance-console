@@ -1,18 +1,17 @@
 
 const readline = require('readline');
 var choice;
-var questions = "Пришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n";
+var questions = "\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n";
 
 function Plane(name, distanse) {   
     this.name=name || "Самолетик"; 
-    this.distanse=distanse || "0";
+    this.distanse=distanse || 0;
 }
 
 Plane.prototype.description = function () {
-  console.log(`
-  Plane.description()
-  Название: ${this.name}
+  console.log(`  Название: ${this.name}
   Дальность полета: ${this.distanse}`); 
+    console.log("^Plane.description()");
 };
 
 function PassangerPlane(name, distanse, peopleCapacity){    
@@ -23,12 +22,9 @@ function PassangerPlane(name, distanse, peopleCapacity){
 
 PassangerPlane.prototype = new Plane();
 PassangerPlane.prototype.description = function(){
-  console.log(`
-  PassangerPlane.description()
-  Тип самолета: ${this.type}
-  Название: ${this.name}
-  Дальность полета: ${this.distanse}
-  `);
+  console.log("^PassangerPlane.description");
+  Plane.prototype.description.apply(this, arguments);
+  console.log(`  Тип самолета: ${this.type}`);
 }
 
 function CargoPlane(name, distanse, weightCapacity){    
@@ -39,12 +35,9 @@ function CargoPlane(name, distanse, weightCapacity){
 
 CargoPlane.prototype = new Plane();
 CargoPlane.prototype.description = function(){
-  console.log(`
-  CargoPlane.description()
-  Тип самолета: ${this.type}
-  Название: ${this.name}
-  Дальность полета: ${this.distanse}
-  `);
+  Plane.prototype.description.apply(this, arguments);
+  console.log(`  Тип самолета: ${this.type}`);
+  console.log("^CargoPlane.description");
 }
 
 function AirbusPassangerPlane(name, distanse, peopleCapacity, comment){    
@@ -54,13 +47,10 @@ function AirbusPassangerPlane(name, distanse, peopleCapacity, comment){
  
 AirbusPassangerPlane.prototype = new PassangerPlane();
 AirbusPassangerPlane.prototype.description = function(){
-  console.log(`
-  AirbusPassangerPlane.description()
-  Тип самолета: ${this.type}
-  Название: ${this.name}
-  Дальность полета: ${this.distanse}
-  Вместимость: ${this.peopleCapacity}
-  `);
+  PassangerPlane.prototype.description.apply(this, arguments);
+  console.log(`  Вместимость: ${this.peopleCapacity}
+      Комментарий: ${this.comment}`);
+  console.log("^AirbusPassangerPlane.description");
 }
 
 function BoeingPassangerPlane(name, distanse, peopleCapacity, comment){    
@@ -70,13 +60,9 @@ function BoeingPassangerPlane(name, distanse, peopleCapacity, comment){
 
 BoeingPassangerPlane.prototype = new PassangerPlane();
 BoeingPassangerPlane.prototype.description = function(){
-  console.log(`
-  BoeingPassangerPlane.description()
-  Тип самолета: ${this.type}
-  Название: ${this.name}
-  Дальность полета: ${this.distanse}
-  Вместимость: ${this.peopleCapacity}
-  `);
+   PassangerPlane.prototype.description.apply(this, arguments);
+    console.log(`  Комментарий: ${this.comment}`);
+    console.log("^BoeingPassangerPlane.description");
 }
 
 function TyCargoPlane(name, distanse, weightCapacity, comment){    
@@ -86,13 +72,9 @@ function TyCargoPlane(name, distanse, weightCapacity, comment){
 
 TyCargoPlane.prototype = new CargoPlane();
 TyCargoPlane.prototype.description = function(){
-  console.log(`
-  TyCargoPlane.description()
-  Тип самолета: ${this.type}
-  Название: ${this.name}
-  Дальность полета: ${this.distanse}
-  Грузоподъемность: ${this.weightCapacity}
-  `);
+  CargoPlane.prototype.description.apply(this, arguments);
+  console.log(`  Комментарий: ${this.comment}`);
+  console.log("^TyCargoPlane.description");
 }
 
 //passangers planes objs
@@ -104,12 +86,14 @@ boeing2 = new BoeingPassangerPlane("Boeing 707", 8640, 200, "норм");
 ty1 = new TyCargoPlane("Ту-136", 15000, 20000, "не оч");
 ty2 = new TyCargoPlane("Ту-330", 17000, 24000, "оч");
 
+ty1.description();
+
 //arrays of planes
 passangerPlanes = [airBus1, airBus2, boeing1, boeing2];
 cargoPlanes = [ty1, ty2];
 airport = [...passangerPlanes, ...cargoPlanes];
 
-  console.log("Интересные фактики: ")
+  console.log("\nИнтересные фактики: ")
   sumPeopleCapacity(passangerPlanes);
   sumWeightCapacity(cargoPlanes);
 
@@ -148,6 +132,9 @@ const rl = readline.createInterface({
 rl.question(questions, (answer) => {
     firstChoice(answer.toString().trim());
     console.log('Выбор: ' + choice[0].type);
+    let thePlane = choice[getRandomInt(0, choice.length-1)];
+    console.log('\n Идем на взлет -вж-вж-вж:\n');
+    thePlane.description();
     rl.close();
 });
 
