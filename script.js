@@ -135,8 +135,6 @@ const rl = readline.createInterface({
   output: process.stdout
 });
 
-// поиск в промежутке
-
 var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n3) весь парк\n", 
 "Сделай правильный выбор! ", "Введи количество перевозки: "];
 rl.question(questions[0], (answer) => {
