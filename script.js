@@ -2,10 +2,11 @@ const readline = require('readline');
 var choice;
 // поиск в промежутке
 // изменить боинг и второй, добавить уникалььное поле
-
+// модное наследование
 function Plane(name, distanse) {   
     this.name=name || "Самолетик"; 
     this.distanse=distanse || 0;
+    this.isFlyable = function(){ return "Да";}
 }
 
 Plane.prototype.description = function () {
@@ -14,16 +15,19 @@ Plane.prototype.description = function () {
     console.log("^Plane.description()");
 };
 
-function PassangerPlane(name, distanse, peopleCapacity){    
+function PassangerPlane(name, distanse, peopleCapacity, freeSeats){    
   this.type = "пассажирский";
   Plane.apply(this, arguments); 
   this.peopleCapacity = peopleCapacity || 0;
+  this.freeSeats = freeSeats;
 }
-
-PassangerPlane.prototype = new Plane();
+//PassangerPlane.prototype = Object.create(Plane.prototype); ????
+// PassangerPlane.prototype = new Plane(); ??? why i need this aa?
 PassangerPlane.prototype.description = function(){
   Plane.prototype.description.apply(this, arguments);
-  console.log(`  Тип самолета: ${this.type}`);
+  console.log(`  Тип самолета: ${this.type}
+  Вместимость: ${this.peopleCapacity}
+  Свободные места: ${this.freeSeats}`);
   console.log("^PassangerPlane.description");
 }
 
@@ -33,66 +37,62 @@ function CargoPlane(name, distanse, weightCapacity){
   this.weightCapacity = weightCapacity || 0;
 }
 
-CargoPlane.prototype = new Plane();
+//CargoPlane.prototype = new Plane();
 CargoPlane.prototype.description = function(){
   Plane.prototype.description.apply(this, arguments);
-  console.log(`  Тип самолета: ${this.type}`);
+  console.log(`  Тип самолета: ${this.type}
+  Грузоподъемность: ${this.weightCapacity}
+  Доступное место для груза: ${this.freeSpace}`);
   console.log("^CargoPlane.description");
 }
 
 function AirbusPassangerPlane(name, distanse, peopleCapacity, freeSeats, comment){    
   PassangerPlane.apply(this, arguments); 
-  this.freeSeats = freeSeats;
   this.comment = comment;
 }
  
-AirbusPassangerPlane.prototype = new PassangerPlane();
+//AirbusPassangerPlane.prototype = new PassangerPlane();
 AirbusPassangerPlane.prototype.description = function(){
   PassangerPlane.prototype.description.apply(this, arguments);
-  console.log(`  Вместимость: ${this.peopleCapacity}
-  Свободные места: ${this.freeSeats}
-  Комментарий: ${this.comment}`);
+  console.log(`  Комментарий: ${this.comment}`);
   console.log("^AirbusPassangerPlane.description");
 }
 
-function BoeingPassangerPlane(name, distanse, peopleCapacity, freeSeats, comment){    
+function BoeingPassangerPlane(name, distanse, peopleCapacity, freeSeats, wingsShape){    
   PassangerPlane.apply(this, arguments); 
-  this.freeSeats = freeSeats;
-  this.comment = comment;
+  this.wingsShape = "правильная";
 }
 
-BoeingPassangerPlane.prototype = new PassangerPlane();
+//BoeingPassangerPlane.prototype = new PassangerPlane();
 BoeingPassangerPlane.prototype.description = function(){
    PassangerPlane.prototype.description.apply(this, arguments);
-    console.log(`  Вместимость: ${this.peopleCapacity}
-    Свободные места: ${this.freeSeats}
-    Комментарий: ${this.comment}`);
+    console.log(`  Форма крыльев : ${this.wingsShape}`);
     console.log("^BoeingPassangerPlane.description");
 }
 
-function TyCargoPlane(name, distanse, weightCapacity, freeSpace, comment){    
+function TyCargoPlane(name, distanse, weightCapacity, freeSpace, comment, armoredGlass){    
   CargoPlane.apply(this, arguments); 
   this.freeSpace = freeSpace;
   this.comment = comment;
+  this.armoredGlass = "Да";
 }
 
-TyCargoPlane.prototype = new CargoPlane();
+//TyCargoPlane.prototype = new CargoPlane();
 TyCargoPlane.prototype.description = function(){
   CargoPlane.prototype.description.apply(this, arguments);
-  console.log(`  Грузоподъемность: ${this.weightCapacity}
-  Доступное место: ${this.freeSpace}
+  console.log(`  Бронированное стекло: ${this.armoredGlass}
   Комментарий: ${this.comment}`);
   console.log("^TyCargoPlane.description");
 }
 
 //passangers planes objs
-airBus1 = new AirbusPassangerPlane("AirBus A320", 10000, 140, 50, 'классненький');
-airBus2 = new AirbusPassangerPlane("AirBus A318", 15000, 105, 60, 'ну такой');
-boeing1 = new BoeingPassangerPlane("Boeing 777", 10640, 400, 10, "хороший");
-boeing2 = new BoeingPassangerPlane("Boeing 707", 8640, 200, 16, "норм");
+airBus1 = new AirbusPassangerPlane("AirBus A320", 1000, 140, 50, 'классненький');
+airBus2 = new AirbusPassangerPlane("AirBus A318", 2000, 105, 60, 'ну такой');
+boeing1 = new BoeingPassangerPlane("Boeing 777", 3000, 400, 10);
+boeing2 = new BoeingPassangerPlane("Boeing 707", 4000, 200, 16);
 //cargo planes objects
-ty1 = new TyCargoPlane("Ту-136", 15000, 20000, 1000, "не оч");
-ty2 = new TyCargoPlane("Ту-330", 17000, 24000, 3570, "оч");
+ty1 = new TyCargoPlane("Ту-136", 5000, 20000, 1000, "не оч");
+ty2 = new TyCargoPlane("Ту-330", 6000, 24000, 3570, "оч");
 
 //arrays of planes
 passangerPlanes = [airBus1, airBus2, boeing1, boeing2];
@@ -137,23 +137,43 @@ const rl = readline.createInterface({
 
 // поиск в промежутке
 
-var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n", 
-"Сделай правильный выбор! ", "Введи количество: "];
+var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n3) весь парк\n", 
+"Сделай правильный выбор! ", "Введи количество перевозки: "];
 rl.question(questions[0], (answer) => {
     firstChoice(answer.toString().trim());
     console.log('Выбор: ' + choice[0].type);
     console.log(' Доступные варианты: ');
-    for (let i=0; i < choice.length; i++){
-      console.log(`  ${i+1}) Название: ${choice[i].name}`);
-      if (choice[i].type == "пассажирский"){
-      console.log(`Свободные места: ${choice[i].freeSeats}`);
+     printAvailable(choice);
+      var intervalFirst, intervalSecond;
+      rl.question("Определим промежуток дальности перелета. Введите первое число: ", (answer) =>{
+        if (isNaN(answer)){
+             console.log("\nОтказано. Судя по всему, это не число.\n");
+       rl.close();
       } else{
-        console.log(`Доступно места для грузоперевозки: ${choice[i].freeSpace}`);
-      }
-    }
-    
+            intervalFirst = parseInt(answer);
+            rl.question("Введите второе число: ", (answer) =>{
+            if (answer < 0 || isNaN(answer)){
+                console.log("\nОтказано. Промежуток не ясен\n");
+             rl.close();
+      } else{
+        intervalSecond = parseInt(answer);     
+          // delete inappropriate planes
+          for (let i=0; i < choice.length; i++){
+            if (choice[i].distanse < intervalFirst || choice[i].distanse > intervalSecond){
+                choice.splice(i, 1); i--;
+            }
+          }
+          if (choice.length == 0){
+            console.log("Подходящих самолетов не найдено.")
+            rl.close();
+          }else{
+            console.log(' Доступные варианты, учитывая выбранный промежуток: ');
+            printAvailable(choice);
     rl.question(questions[1], (answer) =>{
-     
+      if (answer > choice.length || answer < 0 || isNaN(answer)){
+      console.log("\nОтказано. Такого самолета нет.\n");
+       rl.close();
+      } else{
       console.log("Используем самолет номер " + answer.toString().trim() + "\n");
       let thePlaneNumber = answer;
 
@@ -164,11 +184,28 @@ rl.question(questions[0], (answer) => {
          choice[thePlaneNumber-1].freeSpace = booking(choice[thePlaneNumber-1], choice[thePlaneNumber-1].freeSpase,  answer)
         }
         choice[thePlaneNumber-1].description();
+        console.log("\n А самолет вообще летает ? " + choice[thePlaneNumber-1].isFlyable());
          rl.close();
       });
-    });
+    }
   });
+      }
+      }
+ });
+      }
+    });
+});
 
+
+  function printAvailable(choice){
+    for (let i=0; i < choice.length; i++){
+          console.log(` ${i+1}) Название ${choice[i].name}
+          Дальность полета ${choice[i].distanse}`)
+          if (choice[i].type == 'пассажирский'){
+            (`Свободные места ${choice[i].freeSeats}`)
+          }else (`Свободные места ${choice[i].freeSpace}`)
+      }
+  }
 
   function booking(plane, numberOfSpaces, answer){
     if (answer >= numberOfSpaces || answer < 0 || isNaN(answer)){
@@ -193,6 +230,9 @@ function firstChoice(answer) {
       break;
     case '2': 
       choice = cargoPlanes;
+      break;
+    case '3': 
+      choice = airport;
       break;
     case 'пассажирский': 
       choice = passangerPlanes;
