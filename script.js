@@ -1,18 +1,19 @@
 const readline = require('readline');
 var choice;
-// поиск в промежутке
-// изменить боинг и второй, добавить уникалььное поле
-// модное наследование
+
 function Plane(name, distanse) {   
     this.name=name || "Самолетик"; 
     this.distanse=distanse || 0;
-    this.isFlyable = function(){ return "Да";}
+    this.isFlyable = function(){ return `в эксплуатации`  ;}
+}
+
+Plane.prototype.getName = function () {    
+  return this.name; 
 }
 
 Plane.prototype.description = function () {
   console.log(`  Название: ${this.name}
   Дальность полета: ${this.distanse}`); 
-    console.log("^Plane.description()");
 };
 
 function PassangerPlane(name, distanse, peopleCapacity, freeSeats){    
@@ -21,14 +22,14 @@ function PassangerPlane(name, distanse, peopleCapacity, freeSeats){
   this.peopleCapacity = peopleCapacity || 0;
   this.freeSeats = freeSeats;
 }
-//PassangerPlane.prototype = Object.create(Plane.prototype); ????
-// PassangerPlane.prototype = new Plane(); ??? why i need this aa?
+
+PassangerPlane.prototype = new Plane();
+
 PassangerPlane.prototype.description = function(){
   Plane.prototype.description.apply(this, arguments);
   console.log(`  Тип самолета: ${this.type}
   Вместимость: ${this.peopleCapacity}
   Свободные места: ${this.freeSeats}`);
-  console.log("^PassangerPlane.description");
 }
 
 function CargoPlane(name, distanse, weightCapacity){    
@@ -37,25 +38,25 @@ function CargoPlane(name, distanse, weightCapacity){
   this.weightCapacity = weightCapacity || 0;
 }
 
-//CargoPlane.prototype = new Plane();
+CargoPlane.prototype = new Plane();
+
 CargoPlane.prototype.description = function(){
   Plane.prototype.description.apply(this, arguments);
   console.log(`  Тип самолета: ${this.type}
   Грузоподъемность: ${this.weightCapacity}
   Доступное место для груза: ${this.freeSpace}`);
-  console.log("^CargoPlane.description");
 }
 
 function AirbusPassangerPlane(name, distanse, peopleCapacity, freeSeats, comment){    
   PassangerPlane.apply(this, arguments); 
   this.comment = comment;
 }
+
+AirbusPassangerPlane.prototype = new PassangerPlane();
  
-//AirbusPassangerPlane.prototype = new PassangerPlane();
 AirbusPassangerPlane.prototype.description = function(){
   PassangerPlane.prototype.description.apply(this, arguments);
   console.log(`  Комментарий: ${this.comment}`);
-  console.log("^AirbusPassangerPlane.description");
 }
 
 function BoeingPassangerPlane(name, distanse, peopleCapacity, freeSeats, wingsShape){    
@@ -63,11 +64,11 @@ function BoeingPassangerPlane(name, distanse, peopleCapacity, freeSeats, wingsSh
   this.wingsShape = "правильная";
 }
 
-//BoeingPassangerPlane.prototype = new PassangerPlane();
+BoeingPassangerPlane.prototype = new PassangerPlane();
+
 BoeingPassangerPlane.prototype.description = function(){
    PassangerPlane.prototype.description.apply(this, arguments);
     console.log(`  Форма крыльев : ${this.wingsShape}`);
-    console.log("^BoeingPassangerPlane.description");
 }
 
 function TyCargoPlane(name, distanse, weightCapacity, freeSpace, comment, armoredGlass){    
@@ -77,22 +78,22 @@ function TyCargoPlane(name, distanse, weightCapacity, freeSpace, comment, armore
   this.armoredGlass = "Да";
 }
 
-//TyCargoPlane.prototype = new CargoPlane();
+TyCargoPlane.prototype = new CargoPlane();
+
 TyCargoPlane.prototype.description = function(){
   CargoPlane.prototype.description.apply(this, arguments);
   console.log(`  Бронированное стекло: ${this.armoredGlass}
   Комментарий: ${this.comment}`);
-  console.log("^TyCargoPlane.description");
 }
 
 //passangers planes objs
 airBus1 = new AirbusPassangerPlane("AirBus A320", 1000, 140, 50, 'классненький');
-airBus2 = new AirbusPassangerPlane("AirBus A318", 2000, 105, 60, 'ну такой');
-boeing1 = new BoeingPassangerPlane("Boeing 777", 3000, 400, 10);
-boeing2 = new BoeingPassangerPlane("Boeing 707", 4000, 200, 16);
+airBus2 = new AirbusPassangerPlane("AirBus A318", 4000, 105, 60, 'ну такой');
+boeing1 = new BoeingPassangerPlane("Boeing 777", 5000, 400, 10);
+boeing2 = new BoeingPassangerPlane("Boeing 707", 2000, 200, 16);
 //cargo planes objects
-ty1 = new TyCargoPlane("Ту-136", 5000, 20000, 1000, "не оч");
-ty2 = new TyCargoPlane("Ту-330", 6000, 24000, 3570, "оч");
+ty1 = new TyCargoPlane("Ту-136", 6000, 20000, 1000, "не оч");
+ty2 = new TyCargoPlane("Ту-330", 3000, 24000, 3570, "оч");
 
 //arrays of planes
 passangerPlanes = [airBus1, airBus2, boeing1, boeing2];
@@ -122,6 +123,8 @@ function sumWeightCapacity(cargoPlanes){
 }
 
 // sort planes by distance
+passangerPlanes.sort(compareDistance);
+cargoPlanes.sort(compareDistance);
 airport.sort(compareDistance);
 //console.log(airport);
 function compareDistance(a, b) {
@@ -136,7 +139,7 @@ const rl = readline.createInterface({
 });
 
 var questions = ["\nПришло время выбрать самолет: \n1) пассажирский \n2) грузовой\n3) весь парк\n", 
-"Сделай правильный выбор! ", "Введи количество перевозки: "];
+"Сделай правильный выбор! ", "Введите количество для перевозки: "];
 rl.question(questions[0], (answer) => {
     firstChoice(answer.toString().trim());
     console.log('Выбор: ' + choice[0].type);
@@ -182,7 +185,7 @@ rl.question(questions[0], (answer) => {
          choice[thePlaneNumber-1].freeSpace = booking(choice[thePlaneNumber-1], choice[thePlaneNumber-1].freeSpase,  answer)
         }
         choice[thePlaneNumber-1].description();
-        console.log("\n А самолет вообще летает ? " + choice[thePlaneNumber-1].isFlyable());
+        console.log("\n Статус " + choice[thePlaneNumber-1].getName() + ": " + choice[thePlaneNumber-1].isFlyable());
          rl.close();
       });
     }
@@ -198,10 +201,10 @@ rl.question(questions[0], (answer) => {
   function printAvailable(choice){
     for (let i=0; i < choice.length; i++){
           console.log(` ${i+1}) Название ${choice[i].name}
-          Дальность полета ${choice[i].distanse}`)
-          if (choice[i].type == 'пассажирский'){
-            (`Свободные места ${choice[i].freeSeats}`)
-          }else (`Свободные места ${choice[i].freeSpace}`)
+          Дальность полета ${choice[i].distanse}`);
+          if (choice[i].type === 'пассажирский'){
+            console.log(`\t Свободные места ${choice[i].freeSeats}`)
+          }else {console.log(`\t Свободные места ${choice[i].freeSpace}`);}
       }
   }
 
